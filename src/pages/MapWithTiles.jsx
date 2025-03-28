@@ -2,6 +2,9 @@ import React, { useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import { getTileUrl } from '../services/tiles'; // ✅ use your helper
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiczNjZyIsImEiOiJja3l1NXZzdmExYXVwMnFzMjliNW9yZHZtIn0.XyoSereFiHW-nQZpkUKv2Q'; // Add your Mapbox token if needed
 
 const tooltipPoints = [
@@ -26,6 +29,7 @@ const tooltipPoints = [
   { label: 'IC3', coords: [1.7131824, 41.2883341] }
 ];
 
+
 const MapWithTiles = ({ tileId, darkMode }) => {
   const mapContainer = useRef(null);
 
@@ -41,11 +45,11 @@ const MapWithTiles = ({ tileId, darkMode }) => {
     });
 
     map.on('load', () => {
-      // Add raster tile layer
+      // ✅ use helper to generate the tile URL
       map.addSource('orthomosaic', {
         type: 'raster',
         tiles: [
-          `http://172.233.208.105:8080/data/${tileId}/{z}/{x}/{y}.png`
+          getTileUrl(tileId)
         ],
         tileSize: 256,
         minzoom: 15,
@@ -61,21 +65,13 @@ const MapWithTiles = ({ tileId, darkMode }) => {
         }
       });
 
-      // Log click coordinates
-      // map.on('click', (e) => {
-      //   const { lng, lat } = e.lngLat;
-      //   console.log(`Clicked at: ${lat.toFixed(7)}, ${lng.toFixed(7)}`);
-      // });
-
-      // Add labeled markers
       tooltipPoints.forEach(point => {
         const el = document.createElement('div');
         el.className = 'custom-marker';
         el.innerText = point.label;
 
-        // Apply blue background for IC points
         if (['IC1', 'IC2', 'IC3'].includes(point.label)) {
-          el.style.backgroundColor = 'rgba(30, 144, 255, 0.75)'; // DodgerBlue
+          el.style.backgroundColor = 'rgba(30, 144, 255, 0.75)';
         }
 
         new mapboxgl.Marker(el)
@@ -92,7 +88,7 @@ const MapWithTiles = ({ tileId, darkMode }) => {
       <div ref={mapContainer} style={{ height: '100vh', width: '100%' }} />
       <style>{`
         .custom-marker {
-          background-color: rgba(255, 0, 0, 0.49); /* default red */
+          background-color: rgba(255, 0, 0, 0.49);
           color: white;
           padding: 4px 6px;
           border-radius: 4px;
@@ -105,5 +101,6 @@ const MapWithTiles = ({ tileId, darkMode }) => {
     </>
   );
 };
+
 
 export default MapWithTiles;
