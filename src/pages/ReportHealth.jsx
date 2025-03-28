@@ -147,17 +147,6 @@ export default function ReportHealth() {
                                 <Typography variant='h4' sx={{ fontFamily: 'Manrope, sans-serif', fontWeight: 200 }}>Healthiness</Typography>
                             </Paper>
 
-                            {/* <Stack spacing={2} sx={{ mt: 0, border: '1px solid grey', pt:1, height:'80vh', backgroundColor: darkMode ? '#020812' : '#FFFFFF' }}>
-                                <ImageCollection />
-
-                                                               
-
-                                <ChartsCollection />
-
-
-                                <ColorToggleButton /> 
-                            </Stack>
-                             */}
                              <Box sx={{
                                 height: '69vh',
                                 overflowY: 'auto',

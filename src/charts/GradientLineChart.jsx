@@ -2,20 +2,18 @@ import React, { useEffect, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 
+import api from '../services/api'; // ✅ import your service
+
 const GradientLineChart = () => {
   const [chartData, setChartData] = useState([]);
-
-  // 6f73221f-78db-4950-b441-48b6b30b611f.json
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          '/api/assets/6f73221f-78db-4950-b441-48b6b30b611f.json' // <- replace with actual ID or local path
-        );
-        const data = await response.json();
-        console.log(data)
-        setChartData(data);
+        // ✅ use api.get instead of fetch
+        const response = await api.get('/assets/6f73221f-78db-4950-b441-48b6b30b611f.json');
+        setChartData(response.data); // since axios auto-parses JSON
+        console.log(response.data);
       } catch (error) {
         console.error('Failed to fetch percentage data:', error);
       }

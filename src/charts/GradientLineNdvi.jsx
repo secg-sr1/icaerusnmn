@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 
+import api from '../services/api'; // ✅ Use the api service
+
 const GradientLineNdvi = () => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          '/api/assets/27457a67-c28f-435a-a218-b070d4f5f105.json' // Update with your actual file path
-        );
-        const data = await response.json();
-        setChartData(data);
+        // ✅ Call using api.get()
+        const response = await api.get('/assets/27457a67-c28f-435a-a218-b070d4f5f105.json');
+        setChartData(response.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }

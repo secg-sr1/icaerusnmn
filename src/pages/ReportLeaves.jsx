@@ -147,25 +147,6 @@ export default function ReportLeaves() {
                                 <Typography variant='h4' sx={{ fontFamily: 'Manrope, sans-serif', fontWeight: 500 }}>{new Date().toLocaleDateString('en-GB')}</Typography>
                             </Paper>
 
-                            {/* <Box
-                                sx={{
-                                    height: '69vh',
-                                    overflowY: 'auto',
-                                    overflowX: 'hidden',
-                                    '&::-webkit-scrollbar': { width: '5px' },
-                                    '&::-webkit-scrollbar-track': { backgroundColor: 'rgba(0,0,0,0.1)' },
-                                    '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(200,200,200,1)' },
-                                }}
-                            >
-
-                                <Stack spacing={2} sx={{ mt: 0, pt:1, height:'80vh', backgroundColor: darkMode ? '#020812' : '#FFFFFF' }}>
-                                    
-
-                                    <ColorToggleButton />                                
-                                </Stack>
-
-                            </Box> */}
-
                             <Box sx={{
                                 height: '69vh',
                                 overflowY: 'auto',

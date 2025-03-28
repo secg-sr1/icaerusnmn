@@ -7,45 +7,30 @@ import {
   Typography,
 } from '@mui/material';
 
+import api from '../services/api'; // ✅ import api service
+
 export default function ImageCollection({ darkMode }) {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch(
-      "/api/files?limit=500&fields[]=id&fields[]=modified_on&fields[]=type&fields[]=title&fields[]=filesize&sort[]=-uploaded_on&page=1&filter[_and][0][type][_nnull]=true&filter[_and][1][folder][_eq]=dda0fedc-5d78-4fa5-a4ff-5885c73bd554"
-    )
-      .then(async (res) => {
-        const contentType = res.headers.get("content-type");
+    const fetchImages = async () => {
+      try {
+        const response = await api.get(
+          `/files?limit=500&fields[]=id&fields[]=modified_on&fields[]=type&fields[]=title&fields[]=filesize&sort[]=-uploaded_on&page=1&filter[_and][0][type][_nnull]=true&filter[_and][1][folder][_eq]=dda0fedc-5d78-4fa5-a4ff-5885c73bd554`
+        );
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`HTTP ${res.status}: ${errorText}`);
-        }
+        setImages(response.data.data);
+        console.log("Image data:", response.data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
 
-        if (!contentType || !contentType.includes("application/json")) {
-          const html = await res.text();
-          console.error("Unexpected content type:", contentType);
-          console.error("Received:", html.slice(0, 200));
-          throw new Error("Expected JSON but got HTML");
-        }
-
-        const json = await res.json();
-        console.log("Image data:", json);
-        return json;
-      })
-      .then((data) => {
-        if (data?.data) {
-          setImages(data.data);
-        }
-      })
-      .catch((error) => console.error("Error fetching images:", error));
+    fetchImages();
   }, []);
 
   const getRandomHealthiness = () => Math.floor(Math.random() * 21) + 80; // 80–100%
   const getRandomNDVI = () => (Math.random() * 0.2 + 0.7).toFixed(2); // 0.70–0.90
-
-
-  console.log(images, 'IMAGES')
 
   return (
     <Box
@@ -78,7 +63,7 @@ export default function ImageCollection({ darkMode }) {
             <CardMedia
               component="img"
               height="220"
-              image={`/api/assets/${image.id}`}
+              image={`${api.defaults.baseURL}/assets/${image.id}`} // ✅ full url for images
               alt={image.title}
               sx={{
                 objectFit: "cover",

@@ -148,30 +148,6 @@ export default function Report() {
                                 {/* <Typography variant='h4' sx={{ fontFamily: 'Manrope, sans-serif', fontWeight: 500 }}>{new Date().toLocaleDateString('en-GB')}</Typography> */}
                                 <Typography variant='h4' sx={{ fontFamily: 'Manrope, sans-serif', fontWeight: 200 }}>Sensors</Typography>
                             </Paper>
-
-
-
-
-                            {/* <Box sx={{height:'87vh', border:1,
-                                overflowY: 'auto',
-                                overflowX: 'hidden',
-                                '&::-webkit-scrollbar': {width: '5px'},
-                                '&::-webkit-scrollbar-track': {backgroundColor: 'rgba(0,0,0,0.1)'},
-                                '&::-webkit-scrollbar-thumb': {backgroundColor: 'rgba(200,200,200,1)'},
-
-
-                            }}>
-
-                                <Box sx={{height:'100%'}}>
-                                    <AnualChart />
-                                </Box>
-
-
-                                <Box sx={{ display: 'absolute', justifyContent: 'center', mt: 2 }}>
-                                    <ColorToggleButton />
-                                </Box>
-                            </Box> */}
-                              {/* Sticky ToggleButton */}
                         
 
                         {/* Scrollable Chart Area */}

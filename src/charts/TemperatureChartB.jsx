@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 
+import api from '../services/api'; // ✅ use the api service
+
 const TemperatureChartB = () => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          'api/assets/6fea8482-2720-45c8-b605-d3a9440116fe.json'
-        );
-        const data = await response.json();
-        setChartData(data);
+        // ✅ api.get instead of fetch
+        const response = await api.get('/assets/6fea8482-2720-45c8-b605-d3a9440116fe.json');
+        setChartData(response.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -26,15 +26,15 @@ const TemperatureChartB = () => {
 
   const option = {
     title: {
-        text: 'Daily Air Temperature',
-        left: 'center',
-        top: '0',
-        textStyle: {
-          fontSize: 20,
-          fontFamily: 'manrope',
-          fontWeight: 200,
-        },
+      text: 'Daily Air Temperature',
+      left: 'center',
+      top: '0',
+      textStyle: {
+        fontSize: 20,
+        fontFamily: 'manrope',
+        fontWeight: 200,
       },
+    },
     tooltip: {
       trigger: 'axis',
       formatter: function (params) {
@@ -55,25 +55,25 @@ const TemperatureChartB = () => {
       },
     },
     xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: dates,
-        axisLabel: {
-            rotate: 0, // rotates the labels 45 degrees
-            textStyle: {
-            fontSize: 10,
-            fontFamily: 'manrope'
-            },
+      type: 'category',
+      boundaryGap: false,
+      data: dates,
+      axisLabel: {
+        rotate: 0,
+        textStyle: {
+          fontSize: 10,
+          fontFamily: 'manrope'
         },
+      },
     },
     yAxis: {
       type: 'value',
       axisLabel: {
         textStyle: {
-        fontSize: 10,
-        fontFamily: 'manrope'
+          fontSize: 10,
+          fontFamily: 'manrope'
         },
-    },
+      },
     },
     series: [
       {
@@ -106,7 +106,7 @@ const TemperatureChartB = () => {
   };
 
   return (
-    <div style={{ paddingTop: 10}}>
+    <div style={{ paddingTop: 10 }}>
       <ReactEcharts option={option} style={{ height: 400, width: '100%' }} />
     </div>
   );

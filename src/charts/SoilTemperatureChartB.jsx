@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 
+import api from '../services/api'; // ✅ import your api service
+
 const SoilTemperatureChartB = () => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          '/api/assets/6fea8482-2720-45c8-b605-d3a9440116fe.json'
-        );
-        const data = await response.json();
-        setChartData(data);
+        // ✅ use api.get instead of fetch
+        const response = await api.get('/assets/6fea8482-2720-45c8-b605-d3a9440116fe.json');
+        setChartData(response.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -26,22 +26,22 @@ const SoilTemperatureChartB = () => {
 
   const option = {
     title: {
-        text: 'Daily Soil Temperature',
-        left: 'center',
-        top: '0',
-        textStyle: {
-          fontSize: 20,
-          fontFamily: 'manrope',
-          fontWeight: 200,
-        },
+      text: 'Daily Soil Temperature',
+      left: 'center',
+      top: '0',
+      textStyle: {
+        fontSize: 20,
+        fontFamily: 'manrope',
+        fontWeight: 200,
       },
+    },
     tooltip: {
       trigger: 'axis',
       formatter: function (params) {
         let tooltipContent = `<div>${params[0].axisValue}</div>`;
         params.forEach((item) => {
           tooltipContent += `<div>
-            <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:rgb(173, 248, 2);"></span>
+            <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:rgb(165, 156, 141);"></span>
             ${item.seriesName}: ${item.data.toFixed(2)}
           </div>`;
         });
@@ -55,25 +55,25 @@ const SoilTemperatureChartB = () => {
       },
     },
     xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: dates,
-        axisLabel: {
-            rotate: 0, // rotates the labels 45 degrees
-            textStyle: {
-            fontSize: 10,
-            fontFamily: 'manrope'
-            },
+      type: 'category',
+      boundaryGap: false,
+      data: dates,
+      axisLabel: {
+        rotate: 0,
+        textStyle: {
+          fontSize: 10,
+          fontFamily: 'manrope',
         },
+      },
     },
     yAxis: {
       type: 'value',
       axisLabel: {
         textStyle: {
-        fontSize: 10,
-        fontFamily: 'manrope'
+          fontSize: 10,
+          fontFamily: 'manrope',
         },
-    },
+      },
     },
     series: [
       {
@@ -106,7 +106,7 @@ const SoilTemperatureChartB = () => {
   };
 
   return (
-    <div style={{ paddingTop: 10}}>
+    <div style={{ paddingTop: 10 }}>
       <ReactEcharts option={option} style={{ height: 400, width: '100%' }} />
     </div>
   );
