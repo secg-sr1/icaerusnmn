@@ -4,6 +4,8 @@ import { Canvas } from '@react-three/fiber';
 import { Points, OrbitControls } from '@react-three/drei';
 import { useStore } from '../store/useStore';
 
+import api from '../services/api';  // ✅ using the api service
+
 import DronePath from '../components/DronePath';
 import LeavesPosition from '../components/LeavesPosition';
 import SensorsPosition from '../components/SensorsPosition';
@@ -18,52 +20,38 @@ export default function Scene() {
     const selectedType = useStore((state) => state.value); // RGB, NDVI, NIR
     const showTrace = useStore((state) => state.showTrace);
     const showLabels = useStore((state) => state.showLabels);
-    
 
     useEffect(() => {
         const fetchPointCloudData = async () => {
             setLoading(true);
             setError(null);
             try {
-                // Fetch flight data based on selected date
-                const responseFlight = await fetch(`/api/items/icaerus_flights?filter[date_flight][_eq]=${dateChange}`);
-                if (!responseFlight.ok) throw new Error('Failed to fetch flight data');
-    
-                const flightData = await responseFlight.json();
+                // ✅ Step 1 - Get flight
+                const { data: flightData } = await api.get(`/items/icaerus_flights`, {
+                    params: {
+                        filter: { date_flight: { _eq: dateChange } }
+                    }
+                });
+
                 const flight = flightData.data[0];
-    
-                // Check and log flight data to verify correct fields
                 console.log("Fetched flight data:", flight);
-    
-                // Properly match field names exactly from the response
+
                 let assetId;
-                if (selectedType === 'NDVI') {
-                    assetId = flight.pointcloud_ndvi;
-                } else if (selectedType === 'NIR') {
-                    assetId = flight.pointcloud_nir;
-                } else { // Default to RGB
-                    assetId = flight.pointcloud_rgb;
-                }
-    
-                console.log("Selected asset ID:", assetId);
-    
-                // Ensure assetId is present before fetching
-                if (!assetId) {
-                    throw new Error(`No ${selectedType} point cloud available for this date.`);
-                }
-    
-                // Fetch asset URL from Directus Files endpoint to handle redirects properly
-                const assetUrl = `/api/assets/${assetId}`;
-                const responseAsset = await fetch(assetUrl, { redirect: 'follow' });
-                if (!responseAsset.ok) throw new Error('Failed to fetch point cloud asset');
-    
-                const reader = responseAsset.body.getReader();
+                if (selectedType === 'NDVI') assetId = flight.pointcloud_ndvi;
+                else if (selectedType === 'NIR') assetId = flight.pointcloud_nir;
+                else assetId = flight.pointcloud_rgb;
+
+                if (!assetId) throw new Error(`No ${selectedType} point cloud available for this date.`);
+
+                // ✅ Step 2 - Get asset
+                const assetResponse = await api.get(`/assets/${assetId}`, { responseType: 'blob' });
+                const reader = assetResponse.data.stream().getReader(); // depends on your backend sending stream or blob
+
                 const decoder = new TextDecoder('utf-8');
-    
                 let textBuffer = '';
                 let pointCloudData = [];
                 let colorData = [];
-    
+
                 const processChunk = async ({ done, value }) => {
                     if (done) {
                         setPoints(pointCloudData);
@@ -71,12 +59,12 @@ export default function Scene() {
                         setLoading(false);
                         return;
                     }
-    
+
                     textBuffer += decoder.decode(value, { stream: true });
-    
+
                     let lines = textBuffer.split('\n');
                     textBuffer = lines.pop();
-    
+
                     for (let line of lines) {
                         const values = line.trim().split(',');
                         if (values.length >= 6) {
@@ -85,23 +73,24 @@ export default function Scene() {
                             colorData.push(r / 255, g / 255, b / 255);
                         }
                     }
-    
+
                     return reader.read().then(processChunk);
                 };
-    
+
                 reader.read().then(processChunk);
+
             } catch (error) {
                 console.error('Error fetching point cloud data:', error);
                 setError(error.message);
                 setLoading(false);
             }
         };
-    
+
         if (dateChange && selectedType) {
             fetchPointCloudData();
         }
     }, [dateChange, selectedType]);
-    
+
     const flatPoints = useMemo(() => new Float32Array(points), [points]);
     const flatColors = useMemo(() => new Float32Array(colors), [colors]);
 
@@ -130,26 +119,10 @@ export default function Scene() {
                 </bufferGeometry>
                 <pointsMaterial size={0.02} vertexColors sizeAttenuation />
             </points>
-            
-            {
-                showTrace &&
-                <DronePath />
-            }
 
-
-            {
-                showLabels && 
-                <LeavesPosition />
-            }
-
-
-            {
-                showLabels &&
-                <SensorsPosition />
-            }
-            
-
-
+            {showTrace && <DronePath />}
+            {showLabels && <LeavesPosition />}
+            {showLabels && <SensorsPosition />}
         </Canvas>
     );
 }

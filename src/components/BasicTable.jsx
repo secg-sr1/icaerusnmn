@@ -29,15 +29,6 @@ export default function BasicTable({ setSelectedImageId }) {
   const selectedType = useStore(state => state.value);
   const dateChange = useStore(state => state.dateChange);
 
-  // useEffect(() => {
-  //   axios.get(`${import.meta.env.VITE_API_URL}/items/icaerus_flights`)
-  //     .then(response => {
-  //       const dates = response.data.data.map(flight => flight.date_flight);
-  //       setRows(dates.map(date => createData(date, date === dateChange)));
-  //     })
-  //     .catch(error => console.error("There was an error fetching the data:", error));
-  // }, [dateChange]);
-
   
 
   useEffect(() => {
